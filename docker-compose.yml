@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  db:
+    image: postgres
+    container_name: db_education
+    volumes:
+      - db_education_vol:/var/lib/postgresql/data
+    env_file:
+      - .env
+  web:
+    build: .
+    container_name: education
+    command: >
+      sh -c "python manage.py makemigrations --noinput && 
+      python manage.py migrate
+      && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+volumes:
+  db_education_vol:
